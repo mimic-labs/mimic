@@ -1,0 +1,6 @@
+[submodule "cv/detectron2"]
+	path = cv/detectron2
+	url = git@github.com:jackhhao/detectron2.git
+[submodule "cv/Detic"]
+	path = cv/Detic
+	url = git@github.com:jackhhao/Detic.git
