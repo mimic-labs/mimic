@@ -41,15 +41,13 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
 from pathlib import Path
-DETIC_DIR = Path.cwd() / "third_party/Detic"
-IMG_DIR = Path.cwd() / "cv/imgs"
+DETIC_DIR = Path.cwd() / "third_party/Detic" # location of Detic directory from root of project
+IMG_DIR = Path.cwd() / "cv/imgs" # location of images directory from root of project
 
 # sys.path.insert(0, DETIC_DIR / 'third_party')
 # sys.path.insert(0, DETIC_DIR / 'third_party/Deformable-DETR')
 
-os.chdir(DETIC_DIR)
-
-# sys.path.insert(0, 'third_party/CenterNet2/')
+os.chdir(DETIC_DIR) # switch to Detic directory for convenience of referencing later paths
 
 # Detic libraries
 from centernet.config import add_centernet_config
@@ -60,7 +58,6 @@ from detic.modeling.utils import reset_cls_test
 cfg = get_cfg()
 add_centernet_config(cfg)
 add_detic_config(cfg)
-# cfg.merge_from_file(DETIC_DIR / "configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml")
 cfg.merge_from_file("configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml")
 cfg.MODEL.WEIGHTS = 'https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth'
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
@@ -85,6 +82,7 @@ BUILDIN_METADATA_PATH = {
     'coco': 'coco_2017_val',
 }
 
+# Image name to desired custom vocabulary mapping
 IMAGE_CUSTOM_VOCABS = {
     "computer_desk.jpg": [],
     "hospital_cleaning_pov.jpg": ['hand', 'wash rag', 'bucket', 'spray bottle', 'latex gloves', 'tray', 'chair', 'person'],
@@ -93,8 +91,9 @@ IMAGE_CUSTOM_VOCABS = {
     "cooking_vid_hand_path.png": ['bowl', 'chopsticks', 'hand', 'mug', 'sauce bottle', 'plate', 'glass']
 }
 
-def init_image(image_path):
-    image_path_str = (IMG_DIR / image_path).resolve().as_posix()
+# Initialize the image from pathlib Path object
+def init_image(image_path: Path):
+    image_path_str = (IMG_DIR / image_path).resolve().as_posix() # uses the image directory to create absolute image path
     
     cv2.namedWindow("in", cv2.WINDOW_NORMAL)
     im = cv2.imread(image_path_str)
@@ -105,6 +104,7 @@ def init_image(image_path):
 
     return im
 
+# Performs instance segmentation on the image using the built-in vocabulary
 def predict_built_in_vocabulary(image, vocabulary):
     vocabulary = 'lvis' # change to 'lvis', 'objects365', 'openimages', or 'coco'
     metadata = MetadataCatalog.get(BUILDIN_METADATA_PATH[vocabulary])
@@ -123,8 +123,7 @@ def predict_built_in_vocabulary(image, vocabulary):
     cv2.waitKey(0)
     cv2.destroyAllWindows() 
 
-# Change the model's vocabulary to a customized one and get their word-embedding
-#  using a pre-trained CLIP model.
+# Old method of getting word-embeddings using a pre-trained CLIP model. Not used since it takes up too much memory
 from detic.modeling.text.text_encoder import build_text_encoder
 def get_clip_embeddings_old(vocabulary, prompt='a '):
     text_encoder = build_text_encoder(pretrain=True)
@@ -133,6 +132,7 @@ def get_clip_embeddings_old(vocabulary, prompt='a '):
     emb = text_encoder(texts).detach().permute(1, 0).contiguous().cuda()
     return emb
 
+# New method of getting embeddings. Uses batch processing to reduce memory usage
 def get_clip_embeddings(vocabulary, prompt='a ', batch_size=32):
     text_encoder = build_text_encoder(pretrain=True)
     text_encoder.eval()
@@ -147,6 +147,7 @@ def get_clip_embeddings(vocabulary, prompt='a ', batch_size=32):
         embeddings.append(emb)
     return torch.cat(embeddings).view(512, -1)
 
+# Performs instance segmentation on the image using a custom user-defined vocabulary
 def predict_custom_vocabulary(image, classes):
     metadata = MetadataCatalog.get("__unused")
     metadata.thing_classes = classes
