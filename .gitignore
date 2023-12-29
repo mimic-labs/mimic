@@ -13,5 +13,18 @@ ENV/
 env.bak/
 venv.bak/
 
-#
+# Unused / for testing only
 cv/old/
+data/
+translation/
+model/
+datasets/
+tmp/
+third_party/agenthive/
+third_party/free-mujoco-py/
+third_party/hand_object_detector/
+third_party/imaginaire/
+third_party/metaworld/
+third_party/mjrl/
+third_party/r3m/
+third_party/robohive/
