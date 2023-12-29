@@ -53,6 +53,7 @@ os.chdir(DETIC_DIR) # switch to Detic directory for convenience of referencing l
 from centernet.config import add_centernet_config
 from detic.config import add_detic_config
 from detic.modeling.utils import reset_cls_test
+from detic.modeling.text.text_encoder import build_text_encoder
 
 # Build the detector and download our pretrained weights
 cfg = get_cfg()
@@ -124,7 +125,6 @@ def predict_built_in_vocabulary(image, vocabulary):
     cv2.destroyAllWindows() 
 
 # Old method of getting word-embeddings using a pre-trained CLIP model. Not used since it takes up too much memory
-from detic.modeling.text.text_encoder import build_text_encoder
 def get_clip_embeddings_old(vocabulary, prompt='a '):
     text_encoder = build_text_encoder(pretrain=True)
     text_encoder.eval()
