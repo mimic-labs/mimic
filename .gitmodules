@@ -1,6 +1,6 @@
-[submodule "cv/detectron2"]
-	path = cv/detectron2
+[submodule "third_party/detectron2"]
+	path = third_party/detectron2
 	url = git@github.com:jackhhao/detectron2.git
-[submodule "cv/Detic"]
-	path = cv/Detic
+[submodule "third_party/Detic"]
+	path = third_party/Detic
 	url = git@github.com:jackhhao/Detic.git
