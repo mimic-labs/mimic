@@ -41,19 +41,26 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
 from pathlib import Path
-DETIC_PATH = Path.cwd() / "Detic"
+DETIC_DIR = Path.cwd() / "third_party/Detic"
+IMG_DIR = Path.cwd() / "cv/imgs"
 
-os.chdir(DETIC_PATH)
+# sys.path.insert(0, DETIC_DIR / 'third_party')
+# sys.path.insert(0, DETIC_DIR / 'third_party/Deformable-DETR')
+
+os.chdir(DETIC_DIR)
+
+# sys.path.insert(0, 'third_party/CenterNet2/')
 
 # Detic libraries
-from Detic.third_party.CenterNet2.centernet.config import add_centernet_config
-from Detic.detic.config import add_detic_config
-from Detic.detic.modeling.utils import reset_cls_test
+from centernet.config import add_centernet_config
+from detic.config import add_detic_config
+from detic.modeling.utils import reset_cls_test
 
 # Build the detector and download our pretrained weights
 cfg = get_cfg()
 add_centernet_config(cfg)
 add_detic_config(cfg)
+# cfg.merge_from_file(DETIC_DIR / "configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml")
 cfg.merge_from_file("configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml")
 cfg.MODEL.WEIGHTS = 'https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth'
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
@@ -79,15 +86,20 @@ BUILDIN_METADATA_PATH = {
 }
 
 IMAGE_CUSTOM_VOCABS = {
-    "../imgs/computer_desk.jpg": [],
-    "../imgs/hospital_cleaning_pov.jpg": ['hand', 'wash rag', 'bucket', 'spray bottle', 'latex gloves', 'tray', 'chair', 'person'],
-    "../imgs/fastfood_clean.jpg": ['cutting board', 'person', 'dispenser', 'cheese', 'burger bun', 'lettuce', 'hand', 'countertop'],
-    "../imgs/bathroom_cleaning.jpg": ['mop', 'mop bucket', 'trash can', 'sink', 'floor', 'bathroom stall'],
+    "computer_desk.jpg": [],
+    "hospital_cleaning_pov.jpg": ['hand', 'wash rag', 'bucket', 'spray bottle', 'latex gloves', 'tray', 'chair', 'person'],
+    "fastfood_clean.jpg": ['cutting board', 'person', 'dispenser', 'cheese', 'burger bun', 'lettuce', 'hand', 'countertop'],
+    "bathroom_cleaning.jpg": ['mop', 'mop bucket', 'trash can', 'sink', 'floor', 'bathroom stall'],
+    "cooking_vid_hand_path.png": ['bowl', 'chopsticks', 'hand', 'mug', 'sauce bottle', 'plate', 'glass']
 }
 
 def init_image(image_path):
-    im = cv2.imread(image_path)
+    image_path_str = (IMG_DIR / image_path).resolve().as_posix()
+    
+    cv2.namedWindow("in", cv2.WINDOW_NORMAL)
+    im = cv2.imread(image_path_str)
     cv2_imshow('in', im)
+    
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
@@ -105,13 +117,15 @@ def predict_built_in_vocabulary(image, vocabulary):
     v = Visualizer(image[:, :, ::-1], metadata)
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
 
+    cv2.namedWindow("out", cv2.WINDOW_NORMAL)
+
     cv2_imshow('out', out.get_image()[:, :, ::-1])
     cv2.waitKey(0)
     cv2.destroyAllWindows() 
 
 # Change the model's vocabulary to a customized one and get their word-embedding
 #  using a pre-trained CLIP model.
-from Detic.detic.modeling.text.text_encoder import build_text_encoder
+from detic.modeling.text.text_encoder import build_text_encoder
 def get_clip_embeddings_old(vocabulary, prompt='a '):
     text_encoder = build_text_encoder(pretrain=True)
     text_encoder.eval()
@@ -155,6 +169,9 @@ def predict_custom_vocabulary(image, classes):
 
     v = Visualizer(image[:, :, ::-1], metadata)
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    
+    cv2.namedWindow("out2", cv2.WINDOW_NORMAL)
+    
     cv2_imshow('out2', out.get_image()[:, :, ::-1])
     cv2.waitKey(0)
     cv2.destroyAllWindows() 
@@ -167,7 +184,8 @@ def predict_custom_vocabulary(image, classes):
     print(outputs["instances"].pred_boxes)
 
 if __name__ == '__main__':
-    image_path = "../imgs/hospital_cleaning_pov.jpg"
+    # image_path = "../imgs/hospital_cleaning_pov.jpg"
+    image_path = "cooking_vid_hand_path.png"
 
     im = init_image(image_path)
 
