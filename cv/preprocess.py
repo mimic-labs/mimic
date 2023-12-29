@@ -112,6 +112,7 @@ def init_detic_predictor():
 
     return VisualizationDemo(cfg, args) # parallel = True doesn't work since os.chdir shouldn't run multiple times
 
+# Updates centers & orientations with current frame's hand data, returns annotated frame
 def extract_hand_data(centers, orientations, frame):
     results = hands.process(frame)
 
