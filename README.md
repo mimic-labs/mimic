@@ -39,6 +39,7 @@ command to run if program contains helper info
 ## Authors
 
 [Jack Hao](https://www.linkedin.com/in/jackhhao/)
+<br>
 [Arsh Singhal](https://www.linkedin.com/in/arsh-singhal/)
 
 <!-- ## Version History
