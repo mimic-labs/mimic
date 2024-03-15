@@ -144,6 +144,9 @@ def extract_hand_data(centers, orientations, frame):
     
     return frame
 
+def object_hand_distance(hand_coords, object_coords):
+    pass
+
 # Process a video using 1) hand paths, and 2) segmented objects. Return just the hand centers and orientations for now.
 def process_video(video_path: pathlib.Path, output_dir: pathlib.Path):
     centers = [[], []]
@@ -181,6 +184,11 @@ def process_video(video_path: pathlib.Path, output_dir: pathlib.Path):
         
         predictions, visualized_output = detic_predictor.run_on_image(hand_frame) # performs instance segmentation on annotated frame
         output_img = visualized_output.get_image()[:, :, ::-1]
+
+        instances = predictions["instances"].get_fields()
+        obj_boxes = instances['pred_boxes'].tensor.cpu().numpy()
+        obj_classes = instances['pred_classes'].tensor.cpu().numpy()
+        print(predictions)
         
         cv2.imshow("Hand Tracking", output_img) # show the frame to user
         out.write(output_img) # save frame to output video

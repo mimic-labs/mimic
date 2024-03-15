@@ -1,3 +1,8 @@
 {
-    "ros.distro": "noetic"
+    "ros.distro": "noetic",
+    "python.analysis.extraPaths": [
+        "./src/detectron2",
+        "./src/detic",
+        "./src/centernet"
+    ]
 }
