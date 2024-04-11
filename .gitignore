@@ -17,7 +17,7 @@ venv.bak/
 cv/old/
 data/
 translation/
-model/
+model/old/
 datasets/
 tmp/
 third_party/agenthive/
