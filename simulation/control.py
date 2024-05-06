@@ -11,11 +11,21 @@ d = mujoco.MjData(m)
 with mujoco.viewer.launch_passive(m, d) as viewer:
   # Close the viewer automatically after 30 wall-seconds.
   start = time.time()
-  while viewer.is_running() and time.time() - start < 30:
+  while True: #:
     step_start = time.time()
 
-    print(m.nu)
-    action = np.ones((m.nu,))
+    # print(m.nu)
+    action = np.array([1, 0, 0, 0, 0, 0, 0, 0])
+    # action[0] = right/left lateral movement
+    # action[1] = spinning cw/ccw
+    # action[2] = raises arm up/down
+    # action[3] = arm goes out/in
+    # action[4] = wrist rotates cw/ccw
+    # action[5] = hand open/close
+    # action[6] = camera spin
+    # action[7] = camera pitch
+
+
     # action = np.random.uniform(-1, 1, size=m.nu)
     d.ctrl[:] = action
     

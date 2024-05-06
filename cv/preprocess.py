@@ -92,16 +92,17 @@ def init_video_writer(cap, output_name):
     )
 
 # Initialize the Detic predictor (visualization demo)
-def init_detic_predictor():
+def init_detic_predictor(vocab=None):
     # Namespace(config_file='configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml', webcam=None, cpu=False, video_input='..\\..\\cv\\output_vids\\52bae57c-0f27-45ff-892f-bdc87ee27ea9_out.mp4', input=None, output='..\\..\\cv\\output_vids\\cooking_combined2.mp4', vocabulary='custom', custom_vocabulary='bowl,chopsticks,human,mug,sauce bottle,plate,glass,tomatoes', pred_all_class=False, confidence_threshold=0.3, opts=['MODEL.WEIGHTS', 'https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth'])
-    
+    vocab = 'bowl,chopsticks,human,mug,sauce bottle,plate,glass,tomatoes'
+
     config_dict = {
         'config_file': 'configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml',
         'cpu': False,
         'video_input': '',
         'output': '',
         'vocabulary': 'custom',
-        'custom_vocabulary': 'bowl,chopsticks,human,mug,sauce bottle,plate,glass,tomatoes',
+        'custom_vocabulary': vocab,
         'pred_all_class': False,
         'confidence_threshold': 0.3,
         'opts': ['MODEL.WEIGHTS', 'https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth']
@@ -148,7 +149,7 @@ def object_hand_distance(hand_coords, object_coords):
     pass
 
 # Process a video using 1) hand paths, and 2) segmented objects. Return just the hand centers and orientations for now.
-def process_video(video_path: pathlib.Path, output_dir: pathlib.Path):
+def process_video(video_path: pathlib.Path, output_dir: pathlib.Path = None):
     centers = [[], []]
     orientations = [[], []]
 
@@ -157,9 +158,10 @@ def process_video(video_path: pathlib.Path, output_dir: pathlib.Path):
     cap = cv2.VideoCapture(vid_path_str)
     num_frames = 0
     
-    # Set up video writer
-    output_name = f"{output_dir / video_path.stem}_out"
-    out = init_video_writer(cap, output_name)
+    if output_dir is not None:
+        # Set up video writer
+        output_name = f"{output_dir / video_path.stem}_out"
+        out = init_video_writer(cap, output_name)
     
     if not cap.isOpened():
         print("Error: Could not open video.")
@@ -188,10 +190,11 @@ def process_video(video_path: pathlib.Path, output_dir: pathlib.Path):
         instances = predictions["instances"].get_fields()
         obj_boxes = instances['pred_boxes'].tensor.cpu().numpy()
         obj_classes = instances['pred_classes'].tensor.cpu().numpy()
-        print(predictions)
+        # print(predictions)
         
         cv2.imshow("Hand Tracking", output_img) # show the frame to user
-        out.write(output_img) # save frame to output video
+        if output_dir is not None:
+            out.write(output_img) # save frame to output video
 
         if cv2.waitKey(1) in (27, ord('q')): # esc or q to quit
             break
@@ -263,6 +266,6 @@ if __name__ == "__main__":
         hand_data.append(list(zip(centers, orientations)))
         plot_hand_paths(centers, orientations)
         
-    save_data(hand_data, output_csv_path)
+    # save_data(hand_data, output_csv_path)
     
     print(f"Hand data from {len(hand_data)} videos saved to {output_csv_path}")
