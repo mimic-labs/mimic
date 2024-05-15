@@ -28,3 +28,6 @@ third_party/metaworld/
 third_party/mjrl/
 third_party/r3m/
 third_party/robohive/
+
+# too large
+.pt
