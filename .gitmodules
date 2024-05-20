@@ -4,3 +4,6 @@
 [submodule "third_party/Detic"]
 	path = third_party/Detic
 	url = git@github.com:jackhhao/Detic.git
+[submodule "third_party/hand_object_detector"]
+	path = third_party/hand_object_detector
+	url = git@github.com:jackhhao/hand_object_detector
