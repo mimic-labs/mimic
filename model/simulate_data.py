@@ -48,7 +48,7 @@ def generate_rand_obj_sequence(obj_pos_start: torch.Tensor, num_captures: int):
 # generate simple hand sequence (move in a straight line)
 def generate_static_hand_seq(num_captures: int):
     hand_pos_seq = torch.zeros(num_captures, 1, 3) # 1 = single hand for now
-    hand_pos_seq[:, 0, 0] = torch.linspace(0, 100, num_captures)
+    hand_pos_seq[:, 0, 0] = torch.linspace(0, 1000, num_captures)
     # hand_pos_seq[:, 1] = torch.linspace(0, 720, num_captures)
     # hand_pos_seq[:, 2] = torch.linspace(0, 400, num_captures)
     return hand_pos_seq
@@ -133,10 +133,18 @@ def generate_paired_captures(ordering, embeddings, num_objects, num_captures):
     # return correct_paired_hand_pos, img_pos, img_embeddings
 
 # display positions of objects and hand in each capture
-def visualize_captures(embeddings, positions, hand_pos, numCaptures, numObjects, train=True):
-    for i in range(numCaptures):
+def visualize_captures(
+    num_captures,
+    num_objects,
+    embeddings,
+    positions,
+    true_hand_pos,
+    pred_hand_pos=None,
+    train=True
+):
+    for i in range(num_captures):
         img = torch.zeros((1200, 1700, 3), dtype=int) 
-        for j in range(numObjects):
+        for j in range(num_objects):
             embedding = embeddings[i, j, :]
             pca = PCA(n_components=3)
             reduced_embedding = pca.fit_transform(embedding.reshape(4, 32))
@@ -150,9 +158,14 @@ def visualize_captures(embeddings, positions, hand_pos, numCaptures, numObjects,
             y, x = corners[0, 1], corners[0, 0]
             img[y:y+height, x:x+width, :] = color
         
-        center = (int(hand_pos[i, 0, 0]), int(hand_pos[i, 0, 1]))
         img = img.numpy().astype(np.uint8)
-        cv2.circle(img, center, 10, (0, 255, 255), -1)
+        
+        true_hand_center = (int(true_hand_pos[i, 0, 0]), int(true_hand_pos[i, 0, 1]))
+        cv2.circle(img, true_hand_center, 10, (0, 255, 0), -1)
+        
+        if pred_hand_pos is not None:
+            pred_hand_center = (int(pred_hand_pos[i, 0, 0]), int(pred_hand_pos[i, 0, 1]))
+            cv2.circle(img, pred_hand_center, 10, (255, 165, 0), -1)
 
         if train:
             label = f"Train Capture {i}"
@@ -227,8 +240,8 @@ if __name__ == "__main__":
     hand_pos, obj_positions, embeddings_recorded, ordering = generate_sequence(obj_embeddings, obj_positions, num_objects, num_captures)
     correct_hand_pos, base_img_positions, base_img_embeddings = generate_paired_captures(ordering, obj_embeddings, num_objects, num_captures)
 
-    visualize_captures(embeddings_recorded, obj_positions, hand_pos, num_captures, num_objects, train=True)
-    visualize_captures(base_img_embeddings, base_img_positions, correct_hand_pos, num_captures, num_objects, train=False) # test only has one start capture
+    visualize_captures(num_captures, num_objects, embeddings_recorded, obj_positions, hand_pos, train=True)
+    visualize_captures(num_captures, num_objects, base_img_embeddings, base_img_positions, correct_hand_pos, train=False) # test only has one start capture
 
     # embeddings = (num_captures, num_objects, 128)
     # positions = (num_captures, num_objects, 12)
