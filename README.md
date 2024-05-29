@@ -1,6 +1,11 @@
 # Mimic
 Framework for robots to learn simple human tasks with 1 video.
 
+## Demo-Specific Info
+1. Make sure to have FastSAM cloned in directory
+2. Make sure to download same requirements as FastSAM itself, they have a specific version of ultralytics that is needed, do not just manually download ultralytics
+3. Put [FastSAM-x.pt](https://drive.google.com/file/d/1m1sjY4ihXBU1fZXdQ-Xdj-mDltW-2Rqv/view) in this directory (you will have to manually change the filepaths cuz im lazy lol)
+
 ## Description
 
 Our solution comprises a 3-step pipeline for enabling robots to mimic human tasks through video:

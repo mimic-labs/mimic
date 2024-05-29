@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+.DS_Store
 
 # Environments
 .env
@@ -30,4 +30,4 @@ third_party/r3m/
 third_party/robohive/
 
 # too large
-.pt
+*.pt
