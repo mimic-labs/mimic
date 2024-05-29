@@ -5,7 +5,6 @@ from PIL import Image
 import numpy as np
 import cv2
 import sys
-sys.path.append("/Users/ajaybati/Documents/mimic/mimic/FastSAM")
 from fastsam import FastSAM, FastSAMPrompt 
 from PIL import Image
 import matplotlib.pyplot as plt
