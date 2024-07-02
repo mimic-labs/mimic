@@ -44,7 +44,7 @@ Change path to Detic weights and yaml file in tracker.py
 
 - Change paths to weights files in Segment-and-Track-Anything/model_args.py; change path to grounding dino in detector.py
 
-Download the two models
+Download the two models and put int Segment-and-Track-Anything/ckpt/
 - Get the SwinB-DeAOTL model from here https://github.com/yoxu515/aot-benchmark/blob/main/MODEL_ZOO.md
 
 - download the SAM VIT huge and SAM VIT Large and SAM VIT base if you want to test different things
