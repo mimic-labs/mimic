@@ -1,6 +1,9 @@
 [submodule "third_party/detectron2"]
 	path = third_party/detectron2
-	url = git@github.com:jackhhao/detectron2.git
+	url = git@github.com:mimic-labs/detectron2.git
 [submodule "third_party/Detic"]
 	path = third_party/Detic
-	url = git@github.com:jackhhao/Detic.git
+	url = git@github.com:mimic-labs/Detic.git
+[submodule "third_party/Segment-and-Track-Anything"]
+	path = third_party/Segment-and-Track-Anything
+	url = git@github.com:mimic-labs/Segment-and-Track-Anything.git
