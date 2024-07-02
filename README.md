@@ -51,6 +51,8 @@ Download the two models and put int Segment-and-Track-Anything/ckpt/
 - Change paths to weights files in Segment-and-Track-Anything/model_args.py; change path to grounding dino in detector.py
 
 
+Even after doing everything, I had some error with this file: third_party/Detic/detic/modeling/backbone/timm.py, I just commented out the last import in that file and it ran fine.
+
 ## TODOs:
 - [x] clean code above and push to something usable by this bum arsh 
 - [x] Run detic + sam on query image - detic_sam_init() in tracker
